@@ -1,0 +1,39 @@
+#1# Create folder "/etc/backup-tool" and put script to this.
+
+#2# Check SSH using key with SFTP config
+
+#3# TOOL need install follow by "init.sh"
+	Enable: GLOBAL_RCLONE_GDRIVE_INIT=1 for first time set up gdrive
+
+	"bash init.sh"
+
+## The last init, you must copy URL authentication validate to browers, login your google drive account in settings.conf
+## Copy validate string and paste here.
+
+## Put crond
+# Source
+	# Run every day, at night
+	0 0 * * * bash /etc/backup-tool/source.sh borg
+or
+	0 0 * * * bash /etc/backup-tool/source.sh rsync
+
+# Database
+	# Run every 3 hour
+	0 */3 * * * bash /etc/backup-tool/database.sh hour
+
+	# Run at night, daily
+	0 0 * * * bash /etc/backup-tool/database.sh day
+
+# Manual run
+
+	bash /etc/backup-tool/source.sh borg
+	bash /etc/backup-tool/source.sh rsync
+
+	bash /etc/backup-tool/database.sh hour
+	bash /etc/backup-tool/database.sh day
+
+## Setting file using for both /etc/backup-tool/source.sh /etc/backup-tool/database.sh
+
+## Set SMTP command in centos
+echo -e "Test SMTP." | /bin/mailx -vvv -s "[Info] Backup success." -S smtp="mail.reservdelaronline.se:25" -S smtp-use-starttls -S ssl-verify=ignore -S smtp-auth=login -S smtp-auth-user="contact@reservdelaronline.se" -S smtp-auth-password="xxx" -S from="Backup source <backup@reservdelaronline.se>" anyone@gmail.com
+
